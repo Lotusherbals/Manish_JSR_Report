@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manish JSR – Daily Task Dashboard</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
 <!-- SHARE VIEW BANNER -->
 <div id="shareBanner" class="share-banner hidden">
-  <span>👁 You are viewing a shared JSR report (read-only)</span>
-  <a href="index.html">Open My Dashboard</a>
+  <span>👁️ You are viewing a shared JSR report — read only</span>
+  <a href="index.html">Open My Dashboard →</a>
 </div>
 
-<!-- SIDEBAR -->
 <div class="layout">
+
+  <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <span class="logo-icon">📋</span>
+        <div class="logo-icon">📋</div>
         <div>
           <div class="logo-title">Manish JSR</div>
           <div class="logo-sub">Daily Task Dashboard</div>
@@ -36,42 +36,62 @@
         <button id="nextMonth" class="cal-nav-btn">&#8250;</button>
       </div>
       <div class="calendar-grid">
-        <div class="cal-day-header">S</div>
-        <div class="cal-day-header">M</div>
-        <div class="cal-day-header">T</div>
-        <div class="cal-day-header">W</div>
-        <div class="cal-day-header">T</div>
-        <div class="cal-day-header">F</div>
-        <div class="cal-day-header">S</div>
+        <div class="cal-day-header">Su</div>
+        <div class="cal-day-header">Mo</div>
+        <div class="cal-day-header">Tu</div>
+        <div class="cal-day-header">We</div>
+        <div class="cal-day-header">Th</div>
+        <div class="cal-day-header">Fr</div>
+        <div class="cal-day-header">Sa</div>
         <div id="calDays"></div>
       </div>
     </div>
 
-    <!-- Quick Nav -->
+    <!-- Quick Navigation -->
     <div class="quick-nav">
       <button class="qnav-btn" onclick="goToDate('today')">Today</button>
       <button class="qnav-btn" onclick="goToDate('yesterday')">Yesterday</button>
       <button class="qnav-btn" onclick="goToDate('week')">This Week</button>
     </div>
 
-    <!-- Filter -->
+    <!-- Status Filter -->
     <div class="sidebar-section">
       <div class="sidebar-section-title">Filter by Status</div>
-      <label class="filter-check"><input type="checkbox" value="Todo" checked onchange="applyFilters()" class="status-filter"> <span class="badge-todo">Todo</span></label>
-      <label class="filter-check"><input type="checkbox" value="In Progress" checked onchange="applyFilters()" class="status-filter"> <span class="badge-progress">In Progress</span></label>
-      <label class="filter-check"><input type="checkbox" value="Done" checked onchange="applyFilters()" class="status-filter"> <span class="badge-done">Done</span></label>
+      <label class="filter-check">
+        <input type="checkbox" value="Todo" checked onchange="applyFilters()" class="status-filter">
+        <span class="badge badge-todo">Todo</span>
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" value="In Progress" checked onchange="applyFilters()" class="status-filter">
+        <span class="badge badge-progress">In Progress</span>
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" value="Done" checked onchange="applyFilters()" class="status-filter">
+        <span class="badge badge-done">Done</span>
+      </label>
     </div>
 
+    <!-- Priority Filter -->
     <div class="sidebar-section">
       <div class="sidebar-section-title">Filter by Priority</div>
-      <label class="filter-check"><input type="checkbox" value="High" checked onchange="applyFilters()" class="priority-filter"> <span class="badge-high">High</span></label>
-      <label class="filter-check"><input type="checkbox" value="Medium" checked onchange="applyFilters()" class="priority-filter"> <span class="badge-medium">Medium</span></label>
-      <label class="filter-check"><input type="checkbox" value="Low" checked onchange="applyFilters()" class="priority-filter"> <span class="badge-low">Low</span></label>
+      <label class="filter-check">
+        <input type="checkbox" value="High" checked onchange="applyFilters()" class="priority-filter">
+        <span class="badge badge-high">🔴 High</span>
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" value="Medium" checked onchange="applyFilters()" class="priority-filter">
+        <span class="badge badge-medium">🟡 Medium</span>
+      </label>
+      <label class="filter-check">
+        <input type="checkbox" value="Low" checked onchange="applyFilters()" class="priority-filter">
+        <span class="badge badge-low">⚪ Low</span>
+      </label>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- ══ MAIN ══ -->
   <main class="main">
+
     <!-- Header -->
     <header class="main-header">
       <div class="header-left">
@@ -79,9 +99,9 @@
         <p id="displayDay" class="display-day"></p>
       </div>
       <div class="header-right" id="headerActions">
-        <button class="btn btn-outline" onclick="printReport()">🖨 Print</button>
-        <button class="btn btn-primary" onclick="openAddTask()">+ Add Task</button>
+        <button class="btn btn-outline" onclick="printReport()">🖨️ Print</button>
         <button class="btn btn-share" onclick="shareReport()">🔗 Share Report</button>
+        <button class="btn btn-primary" onclick="openAddTask()">+ Add Task</button>
       </div>
     </header>
 
@@ -93,19 +113,19 @@
       </div>
       <div class="stat-card stat-done">
         <div class="stat-number" id="statDone">0</div>
-        <div class="stat-label">Completed</div>
+        <div class="stat-label">Completed ✅</div>
       </div>
       <div class="stat-card stat-progress">
         <div class="stat-number" id="statProgress">0</div>
-        <div class="stat-label">In Progress</div>
+        <div class="stat-label">In Progress 🔄</div>
       </div>
       <div class="stat-card stat-todo">
         <div class="stat-number" id="statTodo">0</div>
-        <div class="stat-label">To Do</div>
+        <div class="stat-label">To Do 📋</div>
       </div>
       <div class="stat-card stat-hours">
         <div class="stat-number" id="statHours">0h</div>
-        <div class="stat-label">Hours Logged</div>
+        <div class="stat-label">Hours Logged ⏱️</div>
       </div>
     </div>
 
@@ -113,32 +133,31 @@
     <div class="progress-section">
       <div class="progress-label">
         <span>Daily Progress</span>
-        <span id="progressPct">0%</span>
+        <span id="progressPct" style="color:#fff;font-weight:700;">0%</span>
       </div>
       <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progressBar"></div>
+        <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
       </div>
     </div>
 
-    <!-- Tasks + JSR Grid -->
+    <!-- Main Content Grid -->
     <div class="content-grid">
+
       <!-- Tasks Column -->
       <div class="tasks-column">
         <div class="section-header">
-          <h2 class="section-title">Tasks</h2>
-          <div class="task-sort">
-            <select id="sortTasks" onchange="renderTasks()" class="sort-select">
-              <option value="priority">Sort: Priority</option>
-              <option value="status">Sort: Status</option>
-              <option value="time">Sort: Time</option>
-            </select>
-          </div>
+          <h2 class="section-title">📝 Tasks</h2>
+          <select id="sortTasks" onchange="renderTasks()" class="sort-select">
+            <option value="priority">Sort: Priority</option>
+            <option value="status">Sort: Status</option>
+            <option value="time">Sort: Time</option>
+          </select>
         </div>
         <div id="taskList" class="task-list">
           <div class="empty-state" id="emptyTasks">
-            <div class="empty-icon">📝</div>
-            <div>No tasks for this day</div>
-            <button class="btn btn-primary mt-1" onclick="openAddTask()">Add First Task</button>
+            <div class="empty-icon">✨</div>
+            <div>No tasks for this day yet</div>
+            <button class="btn btn-primary mt-1" onclick="openAddTask()">+ Add First Task</button>
           </div>
         </div>
       </div>
@@ -146,14 +165,15 @@
       <!-- JSR Report Column -->
       <div class="jsr-column">
         <div class="section-header">
-          <h2 class="section-title">JSR Report</h2>
-          <button class="btn btn-sm btn-outline" id="jsrEditBtn" onclick="toggleJSREdit()">Edit</button>
+          <h2 class="section-title">📊 JSR Report</h2>
+          <button class="btn btn-sm btn-outline" id="jsrEditBtn" onclick="toggleJSREdit()">✏️ Edit</button>
         </div>
 
+        <!-- View Mode -->
         <div id="jsrView" class="jsr-view">
           <div class="jsr-field">
             <div class="jsr-field-label">📌 Summary</div>
-            <div class="jsr-field-value" id="viewSummary">—</div>
+            <div class="jsr-field-value" id="viewSummary">Click Edit to add your daily summary...</div>
           </div>
           <div class="jsr-field">
             <div class="jsr-field-label">✅ Achievements</div>
@@ -173,35 +193,36 @@
           </div>
         </div>
 
+        <!-- Edit Mode -->
         <div id="jsrEdit" class="jsr-edit hidden">
           <div class="form-group">
-            <label>Summary of the Day</label>
-            <textarea id="jsrSummary" rows="3" placeholder="Brief summary of what you worked on..."></textarea>
+            <label>📌 Summary of the Day</label>
+            <textarea id="jsrSummary" rows="3" placeholder="Brief summary of what you worked on today..."></textarea>
           </div>
           <div class="form-group">
-            <label>Achievements</label>
+            <label>✅ Achievements</label>
             <textarea id="jsrAchievements" rows="2" placeholder="What did you complete or accomplish?"></textarea>
           </div>
           <div class="form-group">
-            <label>Blockers / Issues</label>
-            <textarea id="jsrBlockers" rows="2" placeholder="Any blockers or challenges faced?"></textarea>
+            <label>🚧 Blockers / Issues</label>
+            <textarea id="jsrBlockers" rows="2" placeholder="Any blockers, delays or challenges faced?"></textarea>
           </div>
           <div class="form-group">
-            <label>Next Day Plan</label>
-            <textarea id="jsrNextDay" rows="2" placeholder="What will you work on tomorrow?"></textarea>
+            <label>📅 Next Day Plan</label>
+            <textarea id="jsrNextDay" rows="2" placeholder="What will you focus on tomorrow?"></textarea>
           </div>
           <div class="form-group">
-            <label>Mood</label>
+            <label>😊 Mood</label>
             <div class="mood-picker">
-              <button class="mood-btn" onclick="selectMood(this, '😊 Great')">😊<br><small>Great</small></button>
-              <button class="mood-btn" onclick="selectMood(this, '🙂 Good')">🙂<br><small>Good</small></button>
-              <button class="mood-btn" onclick="selectMood(this, '😐 Okay')">😐<br><small>Okay</small></button>
-              <button class="mood-btn" onclick="selectMood(this, '😔 Tough')">😔<br><small>Tough</small></button>
-              <button class="mood-btn" onclick="selectMood(this, '😤 Stressed')">😤<br><small>Stressed</small></button>
+              <button class="mood-btn" onclick="selectMood(this,'😊 Great')">😊<br><small>Great</small></button>
+              <button class="mood-btn" onclick="selectMood(this,'🙂 Good')">🙂<br><small>Good</small></button>
+              <button class="mood-btn" onclick="selectMood(this,'😐 Okay')">😐<br><small>Okay</small></button>
+              <button class="mood-btn" onclick="selectMood(this,'😔 Tough')">😔<br><small>Tough</small></button>
+              <button class="mood-btn" onclick="selectMood(this,'😤 Stressed')">😤<br><small>Stressed</small></button>
             </div>
           </div>
           <div class="jsr-actions">
-            <button class="btn btn-primary" onclick="saveJSR()">Save Report</button>
+            <button class="btn btn-primary" onclick="saveJSR()">💾 Save Report</button>
             <button class="btn btn-outline" onclick="cancelJSREdit()">Cancel</button>
           </div>
         </div>
@@ -210,7 +231,7 @@
   </main>
 </div>
 
-<!-- ADD / EDIT TASK MODAL -->
+<!-- ══ ADD / EDIT TASK MODAL ══ -->
 <div id="taskModal" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-header">
@@ -225,7 +246,7 @@
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea id="taskDesc" rows="2" placeholder="Additional details..."></textarea>
+        <textarea id="taskDesc" rows="2" placeholder="Additional details or notes..."></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -237,6 +258,7 @@
             <option>Planning</option>
             <option>Testing</option>
             <option>Documentation</option>
+            <option>Design</option>
             <option>Other</option>
           </select>
         </div>
@@ -271,15 +293,15 @@
   </div>
 </div>
 
-<!-- SHARE MODAL -->
+<!-- ══ SHARE MODAL ══ -->
 <div id="shareModal" class="modal-overlay hidden">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <h3>Share Report</h3>
+      <h3>🔗 Share Report</h3>
       <button class="modal-close" onclick="closeShareModal()">✕</button>
     </div>
     <div class="modal-body">
-      <p class="share-info">Anyone with this link can view your JSR report for <strong id="shareDate"></strong> (read-only).</p>
+      <p class="share-info">Anyone with this link can view your JSR report for <strong id="shareDate"></strong> in read-only mode.</p>
       <div class="share-url-box">
         <input type="text" id="shareUrl" readonly />
         <button class="btn btn-primary" onclick="copyShareUrl()">Copy</button>
@@ -289,7 +311,7 @@
   </div>
 </div>
 
-<!-- PRINT VIEW (hidden, rendered on print) -->
+<!-- Print View -->
 <div id="printView" class="print-view hidden">
   <div class="print-header">
     <h1>Manish JSR – Daily Task Report</h1>
