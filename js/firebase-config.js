@@ -1,16 +1,12 @@
-// ─────────────────────────────────────────────────────────────────────────
-//  FIREBASE CONFIGURATION
-//  Replace these values with your Firebase project credentials.
-//  Get them from: Firebase Console → Your Project → Project Settings → Web App
-// ─────────────────────────────────────────────────────────────────────────
+// Firebase Configuration — Jsr Report Project
 const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyCvYrOABOS1hysejeg9XDKl4ZV7uZvy4rs",
+  authDomain:        "jsr-report.firebaseapp.com",
+  projectId:         "jsr-report",
+  storageBucket:     "jsr-report.firebasestorage.app",
+  messagingSenderId: "209663731600",
+  appId:             "1:209663731600:web:928ef3127c12fccf5df515"
 };
 
-// Admin email — this user always has full access
+// Admin email — always has full access
 const ADMIN_EMAIL = "manish.sahu@lotusherbals.com";
