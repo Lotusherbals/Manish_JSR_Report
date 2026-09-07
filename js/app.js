@@ -66,11 +66,11 @@ async function signOut() {
 }
 
 async function handleSignedIn(user) {
-  // Admin is always allowed
+  // Admin is always allowed — Firestore errors must not block them
   if (user.email === ADMIN_EMAIL) {
     currentUser = user;
     currentRole = 'admin';
-    await ensureAdminInFirestore(user);
+    try { await ensureAdminInFirestore(user); } catch(e) { console.warn('Firestore not ready yet:', e.message); }
     launchApp();
     return;
   }
@@ -78,15 +78,29 @@ async function handleSignedIn(user) {
   // Check Firestore users collection
   try {
     const snap = await db.collection('users').doc(user.uid).get();
+
+    // Also check pending entry by email (added before first sign-in)
     if (!snap.exists) {
-      showAccessDenied(user.email);
-      return;
+      const safeKey = 'pending_' + user.email.replace(/[@.]/g,'_');
+      const pendingSnap = await db.collection('users').doc(safeKey).get();
+      if (pendingSnap.exists) {
+        const pd = pendingSnap.data();
+        // Migrate to UID-based record
+        await db.collection('users').doc(user.uid).set({ ...pd, uid: user.uid, name: user.displayName || pd.name, pending: false });
+        await db.collection('users').doc(safeKey).delete();
+        currentUser = user;
+        currentRole = pd.role || 'view';
+        launchApp(); return;
+      }
+      showAccessDenied(user.email); return;
     }
     const data = snap.data();
     currentUser = user;
     currentRole = data.role || 'view';
     launchApp();
   } catch (e) {
+    // Firestore not set up yet — if admin, already handled above. For others show denied.
+    console.error('Auth check error:', e.message);
     showAccessDenied(user.email);
   }
 }
@@ -196,17 +210,25 @@ async function loadReport(date) {
     localReportCache[date] = data;
     return data;
   } catch(e) {
-    return { date, tasks:[], jsrReport:{} };
+    console.warn('Firestore read failed (database may not be created yet):', e.message);
+    const empty = { date, tasks:[], jsrReport:{} };
+    localReportCache[date] = empty;
+    return empty;
   }
 }
 
 async function saveReport(data) {
   localReportCache[data.date] = data;
-  await db.collection('reports').doc(data.date).set({
-    ...data,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    updatedBy: currentUser?.email
-  }, { merge: true });
+  try {
+    await db.collection('reports').doc(data.date).set({
+      ...data,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedBy: currentUser?.email
+    }, { merge: true });
+  } catch(e) {
+    console.warn('Firestore save failed (database may not be created yet):', e.message);
+    alert('⚠️ Could not save to database. Please create Firestore Database in Firebase Console first.');
+  }
 }
 
 async function loadAndRenderPage() {
