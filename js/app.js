@@ -595,8 +595,8 @@ function fillKanbanCol(colId, tasks, canEdit) {
 
   tasks.forEach(task => {
     const card   = document.createElement('div');
-    card.className = 'k-card';
     const isDone = task.status==='Done';
+    card.className = 'k-card' + (isDone ? ' k-done' : '');
     const d      = esc(task.date||'');
     const id     = esc(task.id||'');
 
