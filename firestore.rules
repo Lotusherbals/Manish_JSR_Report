@@ -2,20 +2,26 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Reports: anyone can READ (public share links work without login)
-    // Only authenticated users with edit/admin role can WRITE
+    // Reports: public read (share links work without login)
+    // Write: admin email always allowed, OR role-based for other users
     match /reports/{date} {
       allow read: if true;
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'edit'];
+      allow write: if request.auth != null && (
+        request.auth.token.email == 'manish.sahu@lotusherbals.com' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'edit']
+      );
     }
 
-    // Users: only authenticated + authorized users can read/write
+    // Users: admin email always allowed (breaks bootstrap circular dependency)
     match /users/{uid} {
-      allow read: if request.auth != null &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid));
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if request.auth != null && (
+        request.auth.token.email == 'manish.sahu@lotusherbals.com' ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid))
+      );
+      allow write: if request.auth != null && (
+        request.auth.token.email == 'manish.sahu@lotusherbals.com' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
     }
   }
 }
