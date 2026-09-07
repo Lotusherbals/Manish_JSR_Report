@@ -14,7 +14,6 @@ let localReportCache = {};   // { [date]: { tasks, jsrReport } }
 
 // ── Bootstrap ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Detect unconfigured Firebase
   if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'YOUR_API_KEY') {
     show('setupScreen'); return;
   }
@@ -27,16 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
     show('setupScreen'); return;
   }
 
-  // Date from URL param
-  const params   = new URLSearchParams(window.location.search);
+  const params    = new URLSearchParams(window.location.search);
   const dateParam = params.get('date');
+  const isPublicShare = params.get('view') === '1' && !!dateParam;
+
   if (dateParam) selectedDate = dateParam;
 
   const d = new Date(selectedDate + 'T00:00:00');
   calViewYear  = d.getFullYear();
   calViewMonth = d.getMonth();
 
-  // Auth state
+  if (isPublicShare) {
+    // ── PUBLIC SHARE MODE: no login required ──
+    loadPublicShareView(selectedDate);
+    return;
+  }
+
+  // ── DASHBOARD MODE: login required ──
   auth.onAuthStateChanged(async user => {
     if (!user) { showLogin(); return; }
     await handleSignedIn(user);
@@ -123,6 +129,44 @@ function showAccessDenied(email) {
   hideAll();
   document.getElementById('deniedEmail').textContent = email;
   show('accessDenied');
+}
+
+// ── Public Share View (no login) ─────────────────────────────────────────
+async function loadPublicShareView(date) {
+  currentRole = 'view';
+  currentUser = null;
+
+  // Show the share banner
+  document.getElementById('shareBanner').classList.remove('hidden');
+
+  // Show app container in read-only mode
+  hideAll();
+  show('appContainer');
+
+  // Hide user info bar, admin section, sign-out, add task, jsr edit
+  document.getElementById('adminSection').style.display = 'none';
+  document.getElementById('addTaskBtn')?.remove();
+  document.getElementById('jsrEditBtn')?.remove();
+  document.getElementById('emptyAddBtn')?.remove();
+  document.getElementById('headerActions').innerHTML =
+    `<button class="btn btn-share" onclick="window.location.href='index.html'">🔐 Sign In to Edit</button>`;
+
+  // Hide sidebar bottom sign-out
+  document.querySelector('.sidebar-bottom')?.remove();
+
+  // Hide user info bar
+  document.querySelector('.user-info-bar')?.remove();
+
+  // Set up calendar
+  document.getElementById('prevMonth').addEventListener('click', () => {
+    calViewMonth--; if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; } renderCalendar();
+  });
+  document.getElementById('nextMonth').addEventListener('click', () => {
+    calViewMonth++; if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; } renderCalendar();
+  });
+
+  renderCalendar();
+  await loadAndRenderPage();
 }
 
 // ── App Launch ────────────────────────────────────────────────────────────
@@ -451,9 +495,10 @@ function selectMood(btn,mood) {
 
 // ── Share ─────────────────────────────────────────────────────────────────
 function shareReport() {
-  const url=window.location.origin+window.location.pathname+'?date='+selectedDate;
-  document.getElementById('shareDate').textContent=formatDisplay(selectedDate);
-  document.getElementById('shareUrl').value=url;
+  // view=1 makes it fully public — no login required
+  const url = window.location.origin + window.location.pathname + '?date=' + selectedDate + '&view=1';
+  document.getElementById('shareDate').textContent = formatDisplay(selectedDate);
+  document.getElementById('shareUrl').value = url;
   document.getElementById('copySuccess').classList.add('hidden');
   document.getElementById('shareModal').classList.remove('hidden');
 }

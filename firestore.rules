@@ -2,16 +2,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Only authenticated users in the users collection can read reports
+    // Reports: anyone can READ (public share links work without login)
+    // Only authenticated users with edit/admin role can WRITE
     match /reports/{date} {
-      allow read: if request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+      allow read: if true;
       allow write: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'edit'];
     }
 
-    // Only admin can write to users collection; any authorized user can read it
+    // Users: only authenticated + authorized users can read/write
     match /users/{uid} {
-      allow read: if request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+      allow read: if request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid));
       allow write: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
