@@ -26,9 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     show('setupScreen'); return;
   }
 
-  const params    = new URLSearchParams(window.location.search);
-  const dateParam = params.get('date');
-  const isPublicShare = params.get('view') === '1' && !!dateParam;
+  const params        = new URLSearchParams(window.location.search);
+  const dateParam     = params.get('date');
+  const isPublicShare = params.get('view') === '1';  // ?view=1 = public, no login
 
   if (dateParam) selectedDate = dateParam;
 
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   calViewMonth = d.getMonth();
 
   if (isPublicShare) {
-    // ── PUBLIC SHARE MODE: no login required ──
+    // ── PUBLIC SHARE MODE: no login, view + calendar filter only ──
     loadPublicShareView(selectedDate);
     return;
   }
@@ -495,17 +495,23 @@ function selectMood(btn,mood) {
 
 // ── Share ─────────────────────────────────────────────────────────────────
 function shareReport() {
-  // view=1 makes it fully public — no login required
-  const url = window.location.origin + window.location.pathname + '?date=' + selectedDate + '&view=1';
+  const base = window.location.origin + window.location.pathname;
+  // Dashboard share — ?view=1 only (manager can browse ALL dates with calendar)
+  const dashUrl  = base + '?view=1';
+  // Today's report link — opens on today's date specifically
+  const todayUrl = base + '?view=1&date=' + selectedDate;
+
   document.getElementById('shareDate').textContent = formatDisplay(selectedDate);
-  document.getElementById('shareUrl').value = url;
+  document.getElementById('shareUrl').value = dashUrl;
+  document.getElementById('shareTodayUrl').value = todayUrl;
   document.getElementById('copySuccess').classList.add('hidden');
   document.getElementById('shareModal').classList.remove('hidden');
 }
-function copyShareUrl() {
-  navigator.clipboard.writeText(document.getElementById('shareUrl').value).then(()=>{
-    document.getElementById('copySuccess').classList.remove('hidden');
-    setTimeout(()=>document.getElementById('copySuccess').classList.add('hidden'),3000);
+function copyUrl(inputId, msgId) {
+  navigator.clipboard.writeText(document.getElementById(inputId).value).then(() => {
+    const el = document.getElementById(msgId);
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 3000);
   });
 }
 function closeShareModal(){ document.getElementById('shareModal').classList.add('hidden'); }

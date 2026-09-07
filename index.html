@@ -324,16 +324,31 @@
 <div id="shareModal" class="modal-overlay hidden">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <h3>🔗 Share Report</h3>
+      <h3>🔗 Share Dashboard</h3>
       <button class="modal-close" onclick="closeShareModal()">✕</button>
     </div>
     <div class="modal-body">
-      <p class="share-info">Share your JSR report for <strong id="shareDate"></strong>. The recipient must have view access or above.</p>
-      <div class="share-url-box">
-        <input type="text" id="shareUrl" readonly />
-        <button class="btn btn-primary" onclick="copyShareUrl()">Copy</button>
+      <p class="share-info">Anyone with these links can <strong>view</strong> without logging in. Calendar filter works. No edit options shown.</p>
+
+      <div class="share-option">
+        <div class="share-option-label">📅 Full Dashboard <span class="share-badge">Recommended</span></div>
+        <div class="share-option-desc">Manager can browse all dates using the calendar</div>
+        <div class="share-url-box">
+          <input type="text" id="shareUrl" readonly />
+          <button class="btn btn-primary btn-sm" onclick="copyUrl('shareUrl','copySuccess')">Copy</button>
+        </div>
+        <div id="copySuccess" class="copy-success hidden">✅ Dashboard link copied!</div>
       </div>
-      <div id="copySuccess" class="copy-success hidden">✅ Link copied!</div>
+
+      <div class="share-option">
+        <div class="share-option-label">📋 Today's Report <span id="shareDate" style="font-weight:400;color:var(--text-muted)"></span></div>
+        <div class="share-option-desc">Opens directly on this specific date</div>
+        <div class="share-url-box">
+          <input type="text" id="shareTodayUrl" readonly />
+          <button class="btn btn-outline btn-sm" onclick="copyUrl('shareTodayUrl','copySuccess2')">Copy</button>
+        </div>
+        <div id="copySuccess2" class="copy-success hidden">✅ Today's report link copied!</div>
+      </div>
     </div>
   </div>
 </div>
