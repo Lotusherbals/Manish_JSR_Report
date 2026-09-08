@@ -8,57 +8,7 @@
 </head>
 <body>
 
-<!-- ══ SETUP SCREEN ══ -->
-<div id="setupScreen" class="fullscreen hidden">
-  <div class="auth-card">
-    <div class="auth-logo">⚙️</div>
-    <h2 class="auth-title">Firebase Setup Required</h2>
-    <p class="auth-sub">Open <code>js/firebase-config.js</code> and replace the placeholder values with your Firebase credentials.</p>
-    <div class="setup-steps">
-      <div class="setup-step"><span class="step-num">1</span> Go to <strong>console.firebase.google.com</strong></div>
-      <div class="setup-step"><span class="step-num">2</span> Create project → Add Web App</div>
-      <div class="setup-step"><span class="step-num">3</span> Enable <strong>Google Authentication</strong></div>
-      <div class="setup-step"><span class="step-num">4</span> Create <strong>Firestore Database</strong></div>
-      <div class="setup-step"><span class="step-num">5</span> Paste config into <code>firebase-config.js</code></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ LOGIN SCREEN ══ -->
-<div id="loginScreen" class="fullscreen hidden">
-  <div class="auth-card">
-    <div class="auth-logo">📋</div>
-    <h2 class="auth-title">Manish JSR Dashboard</h2>
-    <p class="auth-sub">Sign in with your <strong>@lotusherbals.com</strong> Google account</p>
-    <button class="btn-google" onclick="signInWithGoogle()">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.2 29 5 24 5 13 5 4 14 4 25s9 20 20 20c11 0 20-9 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 5.8 29 3.5 24 3.5 15.9 3.5 8.9 8.2 6.3 14.7z"/><path fill="#4CAF50" d="M24 44.5c4.8 0 9.2-1.8 12.5-4.8l-5.8-4.9C28.9 36.7 26.6 37.5 24 37.5c-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.2 40.3 16 44.5 24 44.5z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4-4.1 5.3l5.8 4.9C36.9 39.2 44 33 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
-      Sign in with Google
-    </button>
-    <p class="auth-note">Access is restricted. Contact <strong>manish.sahu@lotusherbals.com</strong> to request access.</p>
-  </div>
-</div>
-
-<!-- ══ ACCESS DENIED ══ -->
-<div id="accessDenied" class="fullscreen hidden">
-  <div class="auth-card">
-    <div class="auth-logo">🚫</div>
-    <h2 class="auth-title">Access Denied</h2>
-    <p class="auth-sub">Your account (<span id="deniedEmail" style="color:#e05252"></span>) has not been granted access.</p>
-    <p class="auth-sub" style="margin-top:6px">Contact <strong>manish.sahu@lotusherbals.com</strong> to request access.</p>
-    <button class="btn-google" onclick="signOut()" style="margin-top:12px;background:#fff5f5;border-color:#fca5a5;color:#e05252">Sign Out</button>
-  </div>
-</div>
-
-<!-- ══ SHARE BANNER ══ -->
-<div id="shareBanner" class="share-banner hidden">
-  <span>👁️ View-only shared report — calendar filter available</span>
-  <a href="index.html">🔐 Sign In to Edit</a>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     MAIN APP
-══════════════════════════════════════════════ -->
-<div id="appContainer" class="hidden">
+<div id="appContainer">
 
   <!-- TOP NAVBAR -->
   <nav class="top-nav">
@@ -67,17 +17,13 @@
       <span class="nav-title">Manish Daily Task Update Dashboard</span>
     </div>
     <div class="nav-right">
-      <div class="nav-user" id="navUser">
-        <div class="nav-avatar" id="navAvatar"></div>
-        <span id="navName"></span>
-        <span id="navRoleBadge" class="nav-role"></span>
-      </div>
-      <button class="nav-btn" id="adminBtn" onclick="openUserManager()" style="display:none">👥 Users</button>
-      <button class="nav-btn nav-btn-ghost" onclick="signOut()">↩ Sign Out</button>
+      <button class="nav-btn nav-btn-ghost" onclick="printReport()">🖨 Print</button>
+      <button class="nav-btn" onclick="shareReport()">🔗 Share</button>
+      <button class="nav-btn nav-btn-primary" onclick="openAddTask()">+ Add Task</button>
     </div>
   </nav>
 
-  <!-- DASHBOARD CONTENT -->
+  <!-- DASHBOARD -->
   <div class="dashboard">
 
     <!-- TITLE BAR -->
@@ -88,20 +34,20 @@
           <h1 class="db-title">Manish Daily Task Update</h1>
           <p class="db-sub" id="dbSub">Showing all tasks</p>
         </div>
-        <span class="date-badge" id="dateBadge">📅 Loading...</span>
+        <span class="date-badge" id="dateBadge">📅 All Dates</span>
       </div>
       <div class="title-right">
         <div class="view-toggle">
           <button class="view-btn active" id="btnKanban" onclick="setView('kanban')">⬛ Kanban</button>
-          <button class="view-btn" id="btnList" onclick="setView('list')">☰ List</button>
-          <button class="view-btn" id="btnCal" onclick="setView('calendar')">📅 By Date</button>
+          <button class="view-btn" id="btnList"   onclick="setView('list')">☰ List</button>
+          <button class="view-btn" id="btnCal"    onclick="setView('calendar')">📅 By Date</button>
         </div>
         <button class="btn btn-outline-warm" onclick="shareReport()">🔗 Share</button>
-        <button class="btn btn-warm" id="addTaskBtn" onclick="openAddTask()">+ Add Task</button>
+        <button class="btn btn-warm" onclick="openAddTask()">+ Add Task</button>
       </div>
     </div>
 
-    <!-- STATS CARDS -->
+    <!-- STATS -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-top"><span class="stat-label">TOTAL TASKS</span><span class="stat-icon">📁</span></div>
@@ -126,39 +72,32 @@
       </div>
     </div>
 
-    <!-- BREAKDOWN SECTION -->
+    <!-- BREAKDOWN -->
     <div class="breakdown-section">
 
-      <!-- Month-wise Totals -->
+      <!-- Month Panel -->
       <div class="month-panel">
         <div class="panel-header">
           <span>📊 MONTH-WISE TOTALS</span>
           <span class="panel-count" id="monthCount">0 Month(s)</span>
         </div>
-
-        <!-- Month Filter -->
         <div class="month-filter-bar">
           <span class="mf-label">Month Filter:</span>
           <button class="mf-btn active" id="mfAll" onclick="setMonthFilter('all')">All Months</button>
           <button class="mf-btn" id="mfCur" onclick="setMonthFilter('current')">
-            <span id="mfCurLabel">Sep 2026</span>
+            <span id="mfCurLabel">This Month</span>
           </button>
         </div>
-
         <div id="monthTotals" class="month-totals-list"></div>
         <div class="panel-footer" id="monthFooter">Showing totals for all months</div>
       </div>
 
-      <!-- Calendar + Day Preview -->
+      <!-- Calendar Panel -->
       <div class="cal-panel">
         <div class="panel-header">
           <span>📅 DAY-WISE TOTALS & DATE PREVIEW</span>
-          <div class="cal-view-toggle">
-            <button class="cvt-btn active">📅 Calendar</button>
-          </div>
+          <div class="cal-view-toggle"><button class="cvt-btn active">📅 Calendar</button></div>
         </div>
-
-        <!-- Big Calendar -->
         <div class="big-calendar">
           <div class="big-cal-nav">
             <button class="big-cal-nav-btn" id="prevMonth">&#8249;</button>
@@ -171,14 +110,12 @@
             <div id="calDays"></div>
           </div>
         </div>
-
-        <!-- Day Preview -->
         <div class="day-preview">
           <div class="dp-header">
             <span>Preview: <strong id="dpDate"></strong></span>
             <span id="dpFilter" class="dp-filter-badge hidden">Active Filter</span>
             <button class="dp-clear" id="dpClearBtn" onclick="clearDateFilter()" style="display:none">Clear Filter</button>
-            <button class="btn btn-warm btn-xs" id="dpAddBtn" onclick="openAddTask()">+ Add Task</button>
+            <button class="btn btn-warm btn-xs" onclick="openAddTask()">+ Add Task</button>
           </div>
           <div class="dp-stats">
             <div class="dp-stat"><div class="dp-stat-label">Total</div><div class="dp-stat-num" id="dpTotal">0</div></div>
@@ -221,14 +158,14 @@
       <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
     </div>
 
-    <!-- KANBAN BOARD -->
+    <!-- KANBAN -->
     <div id="kanbanView" class="kanban-board">
       <div class="kanban-col">
         <div class="kanban-col-header">
           <span class="kcol-dot kcol-dot-inp"></span>
           <span class="kcol-title">In Progress</span>
           <span class="kcol-count" id="kColInpCount">0</span>
-          <button class="kcol-add" id="kAddInp" onclick="openAddTaskWithStatus('In Progress')">+</button>
+          <button class="kcol-add" onclick="openAddTaskWithStatus('In Progress')">+</button>
         </div>
         <div class="kanban-cards" id="colInProgress"></div>
       </div>
@@ -237,7 +174,7 @@
           <span class="kcol-dot kcol-dot-done"></span>
           <span class="kcol-title">Done / Completed</span>
           <span class="kcol-count" id="kColDoneCount">0</span>
-          <button class="kcol-add" id="kAddDone" onclick="openAddTaskWithStatus('Done')">+</button>
+          <button class="kcol-add" onclick="openAddTaskWithStatus('Done')">+</button>
         </div>
         <div class="kanban-cards" id="colDone"></div>
       </div>
@@ -246,7 +183,7 @@
           <span class="kcol-dot kcol-dot-todo"></span>
           <span class="kcol-title">To Do / Backlog</span>
           <span class="kcol-count" id="kColTodoCount">0</span>
-          <button class="kcol-add" id="kAddTodo" onclick="openAddTaskWithStatus('Todo')">+</button>
+          <button class="kcol-add" onclick="openAddTaskWithStatus('Todo')">+</button>
         </div>
         <div class="kanban-cards" id="colTodo"></div>
       </div>
@@ -272,9 +209,9 @@
       </div>
       <div id="jsrEdit" class="jsr-edit-form hidden">
         <div class="jsr-form-grid">
-          <div class="form-group"><label>📌 Summary</label><textarea id="jsrSummary" rows="3" placeholder="Brief summary of what you worked on..."></textarea></div>
+          <div class="form-group"><label>📌 Summary</label><textarea id="jsrSummary" rows="3" placeholder="Brief summary..."></textarea></div>
           <div class="form-group"><label>✅ Achievements</label><textarea id="jsrAchievements" rows="2" placeholder="What did you complete?"></textarea></div>
-          <div class="form-group"><label>🚧 Blockers</label><textarea id="jsrBlockers" rows="2" placeholder="Any blockers or delays?"></textarea></div>
+          <div class="form-group"><label>🚧 Blockers</label><textarea id="jsrBlockers" rows="2" placeholder="Any blockers?"></textarea></div>
           <div class="form-group"><label>📅 Next Day Plan</label><textarea id="jsrNextDay" rows="2" placeholder="Tomorrow's focus..."></textarea></div>
         </div>
         <div class="form-group" style="margin-top:12px"><label>😊 Mood</label>
@@ -296,35 +233,7 @@
   </div><!-- /.dashboard -->
 </div><!-- /#appContainer -->
 
-<!-- ══ MANAGE USERS MODAL ══ -->
-<div id="userManagerModal" class="modal-overlay hidden">
-  <div class="modal modal-lg">
-    <div class="modal-header"><h3>👥 Manage User Access</h3><button class="modal-close" onclick="closeUserManager()">✕</button></div>
-    <div class="modal-body">
-      <div class="add-user-form">
-        <div class="add-user-title">Add New User</div>
-        <div class="form-row three-col">
-          <div class="form-group"><label>Email Address</label><input type="email" id="newUserEmail" placeholder="user@lotusherbals.com" /></div>
-          <div class="form-group"><label>Name</label><input type="text" id="newUserName" placeholder="Full name" /></div>
-          <div class="form-group"><label>Access Level</label>
-            <select id="newUserRole">
-              <option value="view">👁️ View — Read only</option>
-              <option value="edit">✏️ Edit — Add & edit tasks</option>
-              <option value="admin">⚡ Admin — Full access</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-warm" onclick="addUser()">+ Add User</button>
-        <div id="addUserMsg" class="add-user-msg hidden"></div>
-      </div>
-      <div class="users-list-header"><span>Current Users</span><span id="usersCount" class="users-count"></span></div>
-      <div id="usersList" class="users-list"><div class="loading-users">Loading users...</div></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-outline-warm" onclick="closeUserManager()">Close</button></div>
-  </div>
-</div>
-
-<!-- ══ ADD / EDIT TASK MODAL ══ -->
+<!-- ADD / EDIT TASK MODAL -->
 <div id="taskModal" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-header"><h3 id="modalTitle">Add Task</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
@@ -333,8 +242,13 @@
       <div class="form-group"><label>Task Title *</label><input type="text" id="taskTitle" placeholder="What needs to be done?" /></div>
       <div class="form-group"><label>Description</label><textarea id="taskDesc" rows="2" placeholder="Additional details..."></textarea></div>
       <div class="form-row">
-        <div class="form-group"><label>Category</label>
-          <select id="taskCategory"><option>Development</option><option>Meeting</option><option>Review</option><option>Planning</option><option>Testing</option><option>Documentation</option><option>Design</option><option>Other</option></select>
+        <div class="form-group"><label>Category / Brand</label>
+          <input type="text" id="taskCategory" placeholder="e.g. D2C, LBT, ST, Operations..." list="categoryList" />
+          <datalist id="categoryList">
+            <option>D2C</option><option>LBT</option><option>ST</option><option>LP</option>
+            <option>LH</option><option>LO</option><option>Lotus</option><option>Operations</option>
+            <option>General</option><option>Meeting</option><option>Development</option>
+          </datalist>
         </div>
         <div class="form-group"><label>Priority</label>
           <select id="taskPriority"><option>High</option><option selected>Medium</option><option>Low</option></select>
@@ -355,36 +269,30 @@
   </div>
 </div>
 
-<!-- ══ SHARE MODAL ══ -->
+<!-- SHARE MODAL -->
 <div id="shareModal" class="modal-overlay hidden">
   <div class="modal modal-sm">
     <div class="modal-header"><h3>🔗 Share Dashboard</h3><button class="modal-close" onclick="closeShareModal()">✕</button></div>
     <div class="modal-body">
-      <p class="share-info">Anyone with these links can <strong>view</strong> the dashboard without logging in. Calendar filter works. No edit options shown.</p>
+      <p class="share-info">Copy this link to share the dashboard URL.</p>
       <div class="share-option">
-        <div class="share-option-label">📅 Full Dashboard <span class="share-badge">Recommended</span></div>
-        <div class="share-option-desc">Manager can browse all dates using the calendar</div>
-        <div class="share-url-box"><input type="text" id="shareUrl" readonly /><button class="btn btn-warm btn-sm" onclick="copyUrl('shareUrl','copySuccess')">Copy</button></div>
+        <div class="share-option-label">📋 Dashboard Link</div>
+        <div class="share-url-box">
+          <input type="text" id="shareUrl" readonly />
+          <button class="btn btn-warm btn-sm" onclick="copyShareUrl()">Copy</button>
+        </div>
         <div id="copySuccess" class="copy-success hidden">✅ Copied!</div>
-      </div>
-      <div class="share-option">
-        <div class="share-option-label">📋 Today's Report <span id="shareDate" style="font-weight:400;color:#9c8f83"></span></div>
-        <div class="share-option-desc">Opens directly on this specific date</div>
-        <div class="share-url-box"><input type="text" id="shareTodayUrl" readonly /><button class="btn btn-outline-warm btn-sm" onclick="copyUrl('shareTodayUrl','copySuccess2')">Copy</button></div>
-        <div id="copySuccess2" class="copy-success hidden">✅ Copied!</div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Print -->
-<div id="printView" class="print-view hidden"><div class="print-header"><h1>Manish JSR – Daily Task Report</h1><p id="printDate"></p></div><div id="printContent"></div></div>
+<div id="printView" class="print-view hidden">
+  <div class="print-header"><h1>Manish JSR – Daily Task Report</h1><p id="printDate"></p></div>
+  <div id="printContent"></div>
+</div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
